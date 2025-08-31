@@ -1,2 +1,1 @@
-worker: python egor_bot.py
-
+worker: python egor_watch.py
