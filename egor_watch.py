@@ -6,19 +6,21 @@ import requests
 api_id = int(os.environ["API_ID"])
 api_hash = os.environ["API_HASH"]
 
-chat_username = os.environ["CHAT_USERNAME"]
-egor_id = int(os.environ["EGOR_ID"])
+# Юзернейм або ID чату, де буде відслідковуватися Егор
+chat_username = os.environ["CHAT_USERNAME"]  # username без @ або ID (починається з -100)
+egor_id = int(os.environ["EGOR_ID"])        # Telegram ID Егора
 
+# Telegram Bot для пересилки
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_IDS = [int(i) for i in os.environ["CHAT_IDS"].split(",")]
+CHAT_IDS = [int(i) for i in os.environ["CHAT_IDS"].split(",")]  # список чатів, куди надсилати
 
-# Функція надсилання повідомлень через Telegram Bot API
+# Функція для надсилання повідомлень через Telegram Bot API
 def send_telegram_message(text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     for chat_id in CHAT_IDS:
         requests.post(url, data={"chat_id": chat_id, "text": text})
 
-# Ініціалізація Telethon клієнта
+# Ініціалізація клієнта Telethon
 client = TelegramClient("session", api_id, api_hash)
 
 # Старт клієнта
@@ -28,8 +30,8 @@ client.start()
 send_telegram_message("✅ Поиск Егора...")
 print("✅ Поиск Егора...")
 
-# Подія: нове повідомлення в чаті
-@client.on(events.NewMessage(chats=chat_username))
+# Подія: нове вхідне повідомлення в чаті
+@client.on(events.NewMessage(chats=chat_username, incoming=True))
 async def handler(event):
     sender_id = event.sender_id
     text = event.text
